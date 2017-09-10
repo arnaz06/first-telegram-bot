@@ -13,26 +13,29 @@ bot.getMe().then(function(me) {
 bot.onText(/\/start/,function (msg,match) {
   var fromId = msg.from.id
   var message = "Selamat datang di sikun_bot\n"
-  message+="ketik /cuaca [kode pos] untuk mendapatkan informasi tentang itu."
+  message+="ketik /cuaca [longitude latitude] untuk mendapatkan informasi tentang itu."
   bot.sendMessage(fromId,message)
 })
 
-bot.onText(/\/cuaca (.+)/,function (msg,match) {
+bot.onText(/\/cuaca (.+) (.+)/,function (msg,match) {
   var fromId = msg.from.id
-  var postcode = match[1]
-  getWeatherData(postcode)
+  var long = match[1]
+  var lat = match[2]
+
+  console.log(long,lat)
+  getWeatherData(long, lat)
   .then(function(data){
-    var message= "saya akan melihat cuaca berdasarkan kode pos"+postcode+"\n"
+    var message= "saya akan melihat cuaca berdasarkan longitude "+long+" dan latitude "+lat+"\n"
     message += "cuacanya "+data.wx_desc+"\n"
     message += "Temp "+data.temp_c+"C atau "+data.temp_f+"F"
     bot.sendMessage(fromId,message)
   })
 })
 
-function getWeatherData(postcode){
+function getWeatherData(long,lat){
   var app_id="b909e54e"
   var app_key="b7bb3b351b6d05ca3864b800d285eb15"
-  var url = "http://api.weatherunlocked.com/api/current/us."+postcode
+  var url = "http://api.weatherunlocked.com/api/current/"+long+","+lat
   url += "?app_id="+app_id+"&app_key="+app_key
 
   var options = {
